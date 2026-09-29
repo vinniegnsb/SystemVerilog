@@ -1,0 +1,5 @@
+SystemVerilog 3.3.9 Changelog:
+
+## Bug Fixes ##
+ - Type info: when a symbol is defined in multiple packages without easy to find import/include,
+ 	select file based on path proximity

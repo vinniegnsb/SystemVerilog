@@ -246,6 +246,20 @@ def type_info_on_hier(view,varname,txt=None,region=None):
         # print ('[type_info_on_hier] => type info of {0} = {1}'.format(v,ti))
     return ti
 
+def sort_by_proximity(locs, current_file):
+    cur = os.path.normcase(os.path.abspath(current_file))
+    cur_dir = os.path.dirname(cur)
+
+    def shared_depth(loc):
+        p = os.path.normcase(os.path.abspath(loc.path))  # adapt attr name
+        try:
+            common = os.path.commonpath([cur_dir, os.path.dirname(p)])
+        except ValueError:  # different drives on Windows
+            return 0
+        return len(common.split(os.sep))
+
+    return sorted(locs, key=shared_depth, reverse=True)
+
 ########################################
 def lookup_module(view,mname):
     mi = None
@@ -318,7 +332,8 @@ def lookup_type(view, t):
         t = ts[-1]
 
     locs = view.window().symbol_locations(t, sublime.SYMBOL_SOURCE_ANY, sublime.SYMBOL_TYPE_DEFINITION)
-    locs = [l for l in locs if l.syntax == 'SystemVerilog']
+    locs_sv = [l for l in locs if l.syntax == 'SystemVerilog']
+    locs = sort_by_proximity(locs_sv,  view.buffer().file_name())
     locs_path = [l.path for l in locs]
     # print('locs {}'.format(locs))
     # Get list of impport package if the symbol is defined in more than place and no scope was found
@@ -327,7 +342,7 @@ def lookup_type(view, t):
     #
     if len(pkg_fl) > 0:
         pkg_fl = [l for l in pkg_fl if l in locs_path]
-    # print('Package list = {}'.format(pkg_fl))
+    # print('Package list = {} | Current buffer = {}'.format(pkg_fl, view.buffer().file_name()))
     prev_pos = -1
     for loc in locs:
         if len(pkg_fl) > 0 and loc.path in pkg_fl:
@@ -351,7 +366,7 @@ def lookup_type(view, t):
             # Stop on first match which when there is no package import or first match inside a package
             if len(pkg_fl) == 0 or pos >= 0:
                 break;
-    # print('[SV:lookup_type] (pos {}) : {}'.format(prev_pos, ti))
+    print('[SV:lookup_type] (pos {}) : {}'.format(prev_pos, ti))
     return ti
 
 def lookup_macro(view, name):

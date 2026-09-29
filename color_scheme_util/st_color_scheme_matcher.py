@@ -32,7 +32,7 @@ from .rgba import RGBA, clamp, round_int
 from . import x11colors
 from os import path
 from collections import namedtuple
-from plistlib import readPlistFromBytes
+from plistlib import loads
 import decimal
 
 NEW_SCHEMES = int(sublime.version()) >= 3150
@@ -354,7 +354,7 @@ class ColorSchemeMatcher(object):
                 with open(packages_path(self.color_scheme), 'rb') as f:
                     content = f.read()
             self.legacy = True
-            self.convert_format(readPlistFromBytes(XML_COMMENT_RE.sub(b'', content)))
+            self.convert_format(loads(XML_COMMENT_RE.sub(b'', content)))
         self.overrides = []
         if NEW_SCHEMES:
             self.merge_overrides()

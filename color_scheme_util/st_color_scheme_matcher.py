@@ -50,7 +50,7 @@ COLOR_PARTS = {
     "float": r"[+\-]?(?:(?:\d*\.\d+)|\d+)"
 }
 
-RGB_COLORS = r"""(?x)
+RGB_COLORS = r"""
     (?P<hexa>\#(?P<hexa_content>[\dA-Fa-f]{8}))\b |
     (?P<hex>\#(?P<hex_content>[\dA-Fa-f]{6}))\b |
     (?P<hexa_compressed>\#(?P<hexa_compressed_content>[\dA-Fa-f]{4}))\b |
@@ -61,16 +61,16 @@ RGB_COLORS = r"""(?x)
     )\s*\))
 """ % COLOR_PARTS
 
-HSL_COLORS = r"""(?x)
+HSL_COLORS = r"""
     \b(?P<hsl>hsl\(\s*(?P<hsl_content>%(float)s\s*,\s*%(percent)s\s*,\s*%(percent)s)\s*\)) |
     \b(?P<hsla>hsla\(\s*(?P<hsla_content>%(float)s\s*,\s*(?:%(percent)s\s*,\s*){2}(?:%(percent)s|%(float)s))\s*\))
 """ % COLOR_PARTS
 
-VARIABLES = r"""(?x)
+VARIABLES = r"""
     \b(?P<var>var\(\s*(?P<var_content>[-\w][-\w\d]*)\s*\))
 """
 
-COLOR_MOD = r"""(?x)
+COLOR_MOD = r"""
     \b(?P<color>color\((?P<color_content>.*)\))
 """
 
